@@ -1,0 +1,118 @@
+from std.string import String
+from std.io import println
+from arrayUtils import tctoolkit
+from std.collections.array import Array, AbstractArray
+from std.unit.test import TestUnit, UnitSet
+
+fn test_at(rn: TestUnit) {
+    let arr = new Array<f32>([0.0f, 1.0f, 2.0f, 3.0f, 4.0f])
+    let arr2 = tctoolkit.at(arr, [1, 1, 2, 0, 4])
+    let gt = [1.0f, 1.0f, 2.0f, 0.0f, 4.0f]
+
+    for let i = 0; i < gt.length; i += 1 {
+        rn.assert_f32_eq_pre(gt[i], arr2[i], 0.00001f)
+    }
+}
+
+fn test_castArray(rn: TestUnit) {
+    let value: u32 = 120
+    let value2 = tctoolkit.castArray(value)
+
+    rn.assert_eq(value2.length(), 1)
+    rn.assert_eq(value2[0], value)
+}
+
+fn test_concat(rn: TestUnit) {
+    let arr1 = new Array<u32>([1, 2, 3, 4, 5])
+    let arr2 = new Array<u32>([6, 7, 8, 9, 10])
+    let arr3 = tctoolkit.concat(arr1, arr2)
+    let gt: u32[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10]
+
+    foreach i, v in gt {
+        rn.assert_eq(arr3[i], gt[i])
+    }
+}
+
+fn test_chunk(rn: TestUnit) {
+    let value = new Array<u32>([1, 2, 3, 4, 5, 6, 7, 8, 9, 10])
+    let value2 = tctoolkit.chunk(value, 3)
+
+    let gt: u32[][] = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [10]]
+
+    rn.assert_eq(value2.length(), gt.length)
+
+    for let i: u64 = 0; i < gt.length; i+=1 {
+        let subGt = gt[i]
+        rn.assert_eq(value2[i].length(), subGt.length)
+
+        for let j: u64 = 0; j < subGt.length; j += 1 {
+            rn.assert_eq(value2[i][j], subGt[j])
+        }
+    }
+}
+
+fn test_countBy(rn: TestUnit) {
+    let values = new Array<u32>([1, 2, 3, 4, 5, 6, 7])
+
+    let res = tctoolkit.countBy(values, fn(e: u32) = if e%2 == 0 => "even" else "odd")
+
+    rn.assert_eq(res["even"], 3)
+    rn.assert_eq(res["odd"], 4)
+}
+
+fn test_difference(rn: TestUnit) {
+    let values1 = new Array<u32>([1, 2, 3, 4, 5, 6, 7])
+    let values2 = new Array<u32>([1, 3, 7])
+
+    let diff = tctoolkit.difference(values1, values2)
+    let gt: u32[] = [2, 4, 5, 6]
+
+    rn.assert_eq(diff.length(), gt.length)
+    for let i: u64 = 0; i < gt.length; i+=1 {
+        rn.assert_eq(diff[i], gt[i])
+    }
+}
+
+
+fn test_differenceBy(rn: TestUnit) {
+    let values1 = new Array<{x: u32, y: u32}>([
+        {x: 1, y: 11}, 
+        {x: 2, y: 22}, 
+        {x: 3, y: 33}, 
+        {x: 4, y: 44}, 
+        {x: 5, y: 55}, 
+        {x: 6, y: 66}, 
+        {x: 7, y: 77}
+    ])
+    let values2 = new Array<{x: u32, y: u32}>([
+        {x: 1, y: 1}, 
+        {x: 3, y: 3}, 
+        {x: 7, y: 7}
+    ])
+
+    let diff = tctoolkit.differenceBy(values1, values2, fn(e: {x: u32, y: u32}) = e.x)
+    // values will be that of values1
+    let gt: {x: u32, y: u32}[] = [{2, 22}, {4, 44}, {5, 55}, {6, 66}]
+
+    rn.assert_eq(diff.length(), gt.length)
+    for let i: u64 = 0; i < gt.length; i+=1 {
+        rn.assert_eq(diff[i].x, gt[i].x)
+        rn.assert_eq(diff[i].y, gt[i].y)
+    }
+}
+
+fn main() -> u32 {
+    let test_1 = new TestUnit("at", "Tests tctoolkit.at function", test_at)
+    let test_2 = new TestUnit("castArray", "Tests tctoolkit.castArray function", test_castArray)
+    let test_3 = new TestUnit("concat", "Tests tctoolkit.concat function", test_concat)
+    let test_4 = new TestUnit("chunk", "Tests tctoolkit.chunk function", test_chunk)
+    let test_5 = new TestUnit("countBy", "Tests tctoolkit.countBy function", test_countBy)
+    let test_6 = new TestUnit("difference", "Tests tctoolkit.difference", test_difference)
+    let test_7 = new TestUnit("differenceBy", "Tests tctoolkit.differenceBy", test_differenceBy)
+
+    let set = new UnitSet("Type-C Toolkit Test", "Tests Type-C Toolkit",
+        [test_1, test_2, test_3, test_4, test_5, test_6, test_7]
+    )
+    
+    return set.run()
+}

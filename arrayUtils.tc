@@ -1,0 +1,128 @@
+from std.collections.array import AbstractArray, Array
+from std.collections.map import Map
+from std.io import println
+
+namespace tctoolkit {
+    /**
+     * @brief Retrieves elements from an array at the specified indicies
+     * @param arr: Array to retrieve elements from.
+     * @param indicies: An array of indicies specifying the positions of elements to retrieve.
+     * @return: A new array containing the elements at the specified indices.
+     */
+    fn at<T>(arr: Array<T>, indexes: u64[]) -> Array<T> {
+        let res: Array<T> = new Array<T>()
+
+        foreach idx in indexes {
+            res.push(arr[indexes[idx]])
+        }
+
+        return res
+    }
+
+    /**
+     * @brief: Casts value as an array
+     * @param value: The value to be cast to an array.
+     * @return: An array containing the input value
+     */
+    fn castArray<T>(value: T) -> Array<T> {
+        let res: Array<T> = new Array<T>([value])
+        return res
+    }
+
+    /**
+     * @brief: Concatenates multiple arrays and values into a single array.
+     * @param lhs: First array
+     * @param rhs: Second array
+     * @returns: New array containing elements of both
+     */
+    fn concat<T>(lhs: Array<T>, rhs: Array<T>) -> Array<T> {
+        let newArr = new Array<T>()
+        newArr.push(lhs)
+        newArr.push(rhs)
+        return newArr
+    }
+
+    fn chunk<T>(arr: Array<T>, size: u64) -> Array<Array<T>> {
+        let chunks = new Array<Array<T>>()
+
+        let activeChunk = new Array<T>()
+        for let i: u64 = 0; i < arr.length(); i += 1 {
+            activeChunk.push(arr[i])
+
+            if activeChunk.length() == size {
+                chunks.push(activeChunk)
+                activeChunk = new Array<T>()
+            }
+        }
+
+        if activeChunk.length() > 0 {
+            chunks.push(activeChunk)
+        }
+
+        return chunks
+    }
+
+    /**
+     * @brief: Count the occurrences of each item in an array based on a mapper function.
+     * @param arr: The input array to count occurrences
+     * @param mapper: The transformation function that maps each item to a key
+     * @returns: An Map containing the count of each item based on the transformation function.
+     */
+    fn countBy<T>(arr: Array<T>, mapper: fn(e: T) -> String) -> Map<u64>{
+        let values = arr.map(mapper)
+        let map = new Map<u64>()
+
+        foreach value in values {
+            println("value "+value)
+            if map.contains(value) {
+                map[value] = map[value] + 1
+            }
+            else {
+                map[value] = 1
+            }
+        }
+
+        return map
+    }
+
+    /**
+     * @brief: Computes the difference between two arrays.
+     * This function takes two arrays and returns a new array containing the elements that are present in the first 
+     * array but not in the second array. It effectively filters out any elements from the first array that also appear 
+     * in the second array.
+     * 
+     * @param arr1: The array from which to derive the difference. This is the primary array from which elements will be 
+     * compared and filtered.
+     * 
+     * @param arr2:  The array containing elements to be excluded from the first array. Each element in this array will 
+     * be checked against the first array, and if a match is found, that element will be excluded from the result.
+     * 
+     * @returns: A new array containing the elements that are present in the first array but not in the second array.
+     */
+    fn difference<T>(arr1: Array<T>, arr2: Array<T>) -> Array<T> {
+        let newArr = new Array<T>()
+        
+        foreach e in arr1 {
+            if !arr2.contains(e) {
+                newArr.push(e)
+            }
+        }
+
+        return newArr
+    }
+
+    fn differenceBy<T, U>(arr1: Array<T>, arr2: Array<T>, mapper: fn(e: T) -> U) -> Array<T> {
+        let mappedArray1 = arr1.map(mapper)
+        let mappedArray2 = arr2.map(mapper)
+
+        let newArr = new Array<T>()
+
+        foreach i, v in mappedArray1 {
+            if !mappedArray2.contains(v) {
+                newArr.push(arr1[i])
+            }
+        }
+
+        return newArr
+    }
+}
