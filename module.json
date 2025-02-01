@@ -4,6 +4,7 @@
   "author": "praisethemoon",
   "repo": "https://github.com/praisethemoon/tc-utils",
   "dependencies": [],
+  "license": "MIT",
   "description": "Type-C Toolkit",
   "compiler": {
     "target": "library",

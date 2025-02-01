@@ -101,6 +101,40 @@ fn test_differenceBy(rn: TestUnit) {
     }
 }
 
+
+fn test_differenceWith(rn: TestUnit) {
+    let values1 = new Array<{x: u32, y: u32}>([
+        {x: 1, y: 11}, 
+        {x: 2, y: 22}, 
+        {x: 3, y: 33}, 
+        {x: 4, y: 44}, 
+        {x: 5, y: 55}, 
+        {x: 6, y: 66}, 
+        {x: 7, y: 77}
+    ])
+
+    let values2 = new Array<{x: f32, y: f32}>([
+        {x: 1.0f, y: 1.0f}, 
+        {x: 3.0f, y: 3.0f}, 
+        {x: 7.0f, y: 7.0f}
+    ])
+
+    let diff = tctoolkit.differenceWith(
+        values1, 
+        values2, 
+        fn(e1: {x: u32}, e2: {x: f32}) = e1.x as f32 == e2.x
+    )
+
+    // values will be that of values1
+    let gt: {x: u32, y: u32}[] = [{2, 22}, {4, 44}, {5, 55}, {6, 66}]
+
+    rn.assert_eq(diff.length(), gt.length)
+    for let i: u64 = 0; i < gt.length; i+=1 {
+        rn.assert_eq(diff[i].x, gt[i].x)
+        rn.assert_eq(diff[i].y, gt[i].y)
+    }
+}
+
 fn main() -> u32 {
     let test_1 = new TestUnit("at", "Tests tctoolkit.at function", test_at)
     let test_2 = new TestUnit("castArray", "Tests tctoolkit.castArray function", test_castArray)
@@ -109,9 +143,10 @@ fn main() -> u32 {
     let test_5 = new TestUnit("countBy", "Tests tctoolkit.countBy function", test_countBy)
     let test_6 = new TestUnit("difference", "Tests tctoolkit.difference", test_difference)
     let test_7 = new TestUnit("differenceBy", "Tests tctoolkit.differenceBy", test_differenceBy)
+    let test_8 = new TestUnit("differenceWith", "Tests tctoolkit.differenceWith", test_differenceWith)
 
     let set = new UnitSet("Type-C Toolkit Test", "Tests Type-C Toolkit",
-        [test_1, test_2, test_3, test_4, test_5, test_6, test_7]
+        [test_1, test_2, test_3, test_4, test_5, test_6, test_7, test_8]
     )
     
     return set.run()
