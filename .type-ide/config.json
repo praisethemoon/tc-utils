@@ -1,0 +1,13 @@
+{
+  "runs": [
+    {
+      "name": "build",
+      "args": [],
+      "workingDirectory": "."
+    }
+  ],
+  "outputDirectory": "${workspaceDir}/output",
+  "ignore": [
+    ".git", "output"
+  ]
+}
