@@ -147,6 +147,9 @@ fn test_drop(rn: TestUnit) {
     for let i = 0; i < gt.length; i += 1 {
         rn.assert_eq(res[i], gt[i])
     }
+
+    let res2 = tctoolkit.drop(array, 1000)
+    rn.assert_eq(res2.length(), 0)
 }
 
 fn test_dropRight(rn: TestUnit) {
@@ -161,6 +164,46 @@ fn test_dropRight(rn: TestUnit) {
     for let i = 0; i < gt.length; i += 1 {
         rn.assert_eq(res[i], gt[i])
     }
+
+
+    let res2 = tctoolkit.dropRight(array, 1000)
+    rn.assert_eq(res2.length(), 0)
+}
+
+fn test_dropRightWhile(rn: TestUnit) {
+    let array = new Array<u32>([1, 2, 3, 4, 5])
+    let gt: u32[] = [1, 2, 3]
+    let count = 2
+
+    let res = tctoolkit.dropRightWhile(array, fn(e: u32, i: u64, arr: Array<u32>) = e > 3)
+
+    rn.assert_eq(res.length(), gt.length)
+
+    for let i = 0; i < gt.length; i += 1 {
+        rn.assert_eq(res[i], gt[i])
+    }
+
+
+    let res2 = tctoolkit.dropRightWhile(array, fn(e: u32, i: u64, arr: Array<u32>) = e > 0)
+    rn.assert_eq(res2.length(), 0)
+}
+
+fn test_dropWhile(rn: TestUnit) {
+    let array = new Array<u32>([1, 2, 3, 4, 5])
+    let gt: u32[] = [3, 4, 5]
+    let count = 2
+
+    let res = tctoolkit.dropWhile(array, fn(e: u32, i: u64, arr: Array<u32>) = e < 3)
+
+    rn.assert_eq(res.length(), gt.length)
+
+    for let i = 0; i < gt.length; i += 1 {
+        rn.assert_eq(res[i], gt[i])
+    }
+
+
+    let res2 = tctoolkit.dropWhile(array, fn(e: u32, i: u64, arr: Array<u32>) = e > 0)
+    rn.assert_eq(res2.length(), 0)
 }
 
 fn main() -> u32 {
@@ -174,9 +217,11 @@ fn main() -> u32 {
     let test_8 = new TestUnit("differenceWith", "Tests tctoolkit.differenceWith", test_differenceWith)
     let test_9 = new TestUnit("drop", "Tests tctoolkit.drop", test_drop)
     let test_10 = new TestUnit("dropRight", "Tests tctoolkit.dropRight", test_dropRight)
+    let test_11 = new TestUnit("dropRightWhile", "Tests tctoolkit.dropRightWhile", test_dropRightWhile)
+    let test_12 = new TestUnit("dropWhile", "Tests tctoolkit.dropWhile", test_dropWhile)
 
     let set = new UnitSet("Type-C Toolkit Test", "Tests Type-C Toolkit",
-        [test_1, test_2, test_3, test_4, test_5, test_6, test_7, test_8, test_9, test_10]
+        [test_1, test_2, test_3, test_4, test_5, test_6, test_7, test_8, test_9, test_10, test_11, test_12]
     )
     
     return set.run()

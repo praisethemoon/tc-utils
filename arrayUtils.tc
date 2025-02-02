@@ -218,4 +218,75 @@ namespace tctoolkit {
 
         return result
     }
+
+    /**
+     * @brief Removes elements from the end of an array until the predicate returns `false`.
+     * This function iterates over an array and drops elements from the end until the provided predicate function 
+     * returns `false`. It then returns a new array with the remaining elements.
+     * 
+     * @param arr: The array from which to drop elements
+     * @param canContinueDropping: A predicate function that determines whether to continue dropping elements. The 
+     * function is called with each element from the end, with each element, and dropping continues as long as it 
+     * returns `true`.
+     * @returns: A new array with the elements remaining after the predicate returns `false`.
+     */
+    fn dropRightWhile<T>(arr: Array<T>, canContinueDropping: fn (item: T, index: u64, arr: Array<T>) -> bool) -> 
+        Array<T> 
+    {
+        let newArr = new Array<T>()
+
+        let length = arr.length()
+        let counter = 0
+
+        if length == 0 {
+            return newArr
+        }
+
+        let canDrop = canContinueDropping(arr[-1], length - 1, arr)
+
+        while canDrop {
+            length = length - 1
+            canDrop = (length != 0) && (canContinueDropping(arr[length-1], length - 1, arr))
+        }
+
+        for let i: u64 = 0; i < length; i += 1 {
+            newArr.push(arr[i])
+        }
+
+        return newArr
+    }
+
+    /**
+     * @brief: Removes elements from the beginning of an array until the predicate returns `false`.
+     * This function iterates over an array and drops elements from the start until the provided predicate function 
+     * returns `false`. It then returns a new array with the remaining elements.
+     * 
+     * @param arr: The array from which to drop elements
+     * @param canContinueDropping: A predicate function that determines whether to continue dropping elements. The 
+     * function is called with each element, and dropping continues as long as it returns `true`.
+     * @returns: A new array with the elements remaining after the predicate returns `false`
+     */
+    fn dropWhile<T>(arr: Array<T>, canContinueDropping: fn (item: T, index: u64, arr: Array<T>) -> bool) {
+        let newArr = new Array<T>()
+        let length: u64 = arr.length()
+        let counter: u64 = 0
+
+        if length == 0 {
+            return newArr
+        }
+
+
+        let canDrop = canContinueDropping(arr[0], 0, arr)
+
+        while canDrop {
+            counter += 1
+            canDrop = (counter < length) && (canContinueDropping(arr[counter], counter - 1, arr))
+        }
+
+        for ; counter < length; counter += 1 {
+            newArr.push(arr[counter])
+        }
+
+        return newArr
+    }
 }
